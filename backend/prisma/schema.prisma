@@ -1,0 +1,323 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  USER
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+  ARCHIVED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum HabitFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
+enum GoalStatus {
+  ACTIVE
+  COMPLETED
+  PAUSED
+  ABANDONED
+}
+
+enum NotificationType {
+  TASK_DUE
+  GOAL_REMINDER
+  HABIT_REMINDER
+  SYSTEM
+  AI_INSIGHT
+}
+
+model User {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  name           String
+  avatar         String?
+  password       String?
+  googleId       String?   @unique
+  role           Role      @default(USER)
+  isBanned       Boolean   @default(false)
+  isSuspended    Boolean   @default(false)
+  suspendedUntil DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  lastLogin      DateTime?
+
+  sessions        Session[]
+  tasks           Task[]
+  goals           Goal[]
+  habits          Habit[]
+  habitLogs       HabitLog[]
+  notes           Note[]
+  focusSessions   FocusSession[]
+  activityLogs    ActivityLog[]
+  auditLogs       AuditLog[]
+  notifications   Notification[]
+  aiInteractions  AIInteraction[]
+  passwordResets  PasswordReset[]
+
+  @@index([email])
+  @@index([role])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  userId       String
+  token        String   @unique
+  loginTime    DateTime @default(now())
+  logoutTime   DateTime?
+  browser      String?
+  deviceType   String?
+  os           String?
+  ipAddress    String?
+  country      String?
+  region       String?
+  city         String?
+  isActive     Boolean  @default(true)
+  expiresAt    DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+}
+
+model PasswordReset {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Task {
+  id           String       @id @default(cuid())
+  userId       String
+  title        String
+  description  String?
+  status       TaskStatus   @default(TODO)
+  priority     TaskPriority @default(MEDIUM)
+  category     String?
+  tags         String[]
+  dueDate      DateTime?
+  completedAt  DateTime?
+  isRecurring  Boolean      @default(false)
+  recurPattern String?
+  parentId     String?
+  goalId       String?
+  isArchived   Boolean      @default(false)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent       Task?          @relation("TaskSubtasks", fields: [parentId], references: [id])
+  subtasks     Task[]         @relation("TaskSubtasks")
+  goal         Goal?          @relation(fields: [goalId], references: [id])
+  dependencies TaskDependency[] @relation("DependentTask")
+  dependents   TaskDependency[] @relation("RequiredTask")
+
+  @@index([userId])
+  @@index([status])
+  @@index([dueDate])
+}
+
+model TaskDependency {
+  id              String @id @default(cuid())
+  dependentTaskId String
+  requiredTaskId  String
+
+  dependentTask Task @relation("DependentTask", fields: [dependentTaskId], references: [id], onDelete: Cascade)
+  requiredTask  Task @relation("RequiredTask", fields: [requiredTaskId], references: [id], onDelete: Cascade)
+
+  @@unique([dependentTaskId, requiredTaskId])
+}
+
+model Goal {
+  id          String     @id @default(cuid())
+  userId      String
+  title       String
+  description String?
+  category    String?
+  status      GoalStatus @default(ACTIVE)
+  progress    Int        @default(0)
+  targetDate  DateTime?
+  completedAt DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tasks Task[]
+
+  @@index([userId])
+}
+
+model Habit {
+  id          String         @id @default(cuid())
+  userId      String
+  title       String
+  description String?
+  frequency   HabitFrequency @default(DAILY)
+  targetCount Int            @default(1)
+  color       String?
+  icon        String?
+  currentStreak Int          @default(0)
+  longestStreak Int          @default(0)
+  isActive    Boolean        @default(true)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  user User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  logs HabitLog[]
+
+  @@index([userId])
+}
+
+model HabitLog {
+  id          String   @id @default(cuid())
+  habitId     String
+  userId      String
+  completedAt DateTime @default(now())
+  count       Int      @default(1)
+  notes       String?
+
+  habit Habit @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([habitId])
+  @@index([userId])
+}
+
+model Note {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String
+  content     String
+  tags        String[]
+  isPinned    Boolean  @default(false)
+  isArchived  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attachments Attachment[]
+
+  @@index([userId])
+}
+
+model Attachment {
+  id        String   @id @default(cuid())
+  noteId    String
+  filename  String
+  url       String
+  size      Int
+  mimeType  String
+  createdAt DateTime @default(now())
+
+  note Note @relation(fields: [noteId], references: [id], onDelete: Cascade)
+}
+
+model FocusSession {
+  id          String    @id @default(cuid())
+  userId      String
+  startTime   DateTime  @default(now())
+  endTime     DateTime?
+  duration    Int?
+  taskId      String?
+  notes       String?
+  isCompleted Boolean   @default(false)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String
+  entity    String?
+  entityId  String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  action     String
+  target     String?
+  targetId   String?
+  oldValue   Json?
+  newValue   Json?
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  message   String
+  isRead    Boolean          @default(false)
+  entityId  String?
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model AIInteraction {
+  id        String   @id @default(cuid())
+  userId    String
+  prompt    String
+  response  String
+  feature   String
+  tokens    Int?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model SystemSettings {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+}
