@@ -4,6 +4,8 @@ import { Bot, Send, Zap, Calendar, Target, Sparkles, User, Construction } from '
 import { aiAPI, tasksAPI } from '../services/api';
 import toast from 'react-hot-toast';
 
+const APP_NAME = process.env.REACT_APP_NAME || 'विद्युत्धारा';
+
 const SUGGESTIONS = [
   'What should I work on next?',
   'Which goals are falling behind?',
@@ -62,7 +64,8 @@ function ChatMessage({ msg }) {
         </div>
       )}
       <div style={{
-        maxWidth: '78%', padding: '12px 16px', borderRadius: isUser ? '16px 4px 16px 16px' : '4px 16px 16px 16px',
+        maxWidth: '78%', padding: '12px 16px',
+        borderRadius: isUser ? '16px 4px 16px 16px' : '4px 16px 16px 16px',
         background: isUser ? 'var(--gradient-accent)' : 'var(--bg-card)',
         color: isUser ? '#0a0b0f' : 'var(--text-primary)',
         border: isUser ? 'none' : '1px solid var(--border)',
@@ -204,8 +207,17 @@ function PlanTab() {
           <label className="form-label">Available hours today</label>
           <div style={{ display: 'flex', gap: 8 }}>
             {[2, 4, 6, 8].map(h => (
-              <button key={h} onClick={() => !AI_UNAVAILABLE && setHours(h)}
-                style={{ flex: 1, padding: '10px 0', borderRadius: 'var(--radius-md)', border: '1px solid', cursor: AI_UNAVAILABLE ? 'not-allowed' : 'pointer', fontSize: '0.9rem', fontWeight: 600, transition: 'all var(--transition)', background: hours === h ? 'var(--accent-dim)' : 'var(--bg-elevated)', color: hours === h ? 'var(--accent)' : 'var(--text-secondary)', borderColor: hours === h ? 'var(--accent)' : 'var(--border)', opacity: AI_UNAVAILABLE ? 0.45 : 1 }}>
+              <button key={h}
+                onClick={() => !AI_UNAVAILABLE && setHours(h)}
+                style={{
+                  flex: 1, padding: '10px 0', borderRadius: 'var(--radius-md)',
+                  border: '1px solid', cursor: AI_UNAVAILABLE ? 'not-allowed' : 'pointer',
+                  fontSize: '0.9rem', fontWeight: 600, transition: 'all var(--transition)',
+                  background: hours === h ? 'var(--accent-dim)' : 'var(--bg-elevated)',
+                  color: hours === h ? 'var(--accent)' : 'var(--text-secondary)',
+                  borderColor: hours === h ? 'var(--accent)' : 'var(--border)',
+                  opacity: AI_UNAVAILABLE ? 0.45 : 1,
+                }}>
                 {h}h
               </button>
             ))}
@@ -274,7 +286,7 @@ function PlanTab() {
 export default function AIAssistant() {
   const [tab, setTab] = useState('chat');
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: "Hi! I'm your VidyutDhar AI assistant. I have full context of your tasks, goals, and habits. Ask me anything — I can help you plan your day, prioritize tasks, or review your progress. 🚀" }
+    { role: 'assistant', content: `Hi! I'm your ${APP_NAME} AI assistant. I have full context of your tasks, goals, and habits. Ask me anything — I can help you plan your day, prioritize tasks, or review your progress. 🚀` }
   ]);
   const [input, setInput] = useState('');
   const [typing, setTyping] = useState(false);
@@ -309,9 +321,9 @@ export default function AIAssistant() {
   };
 
   const TABS = [
-    { id: 'chat', label: 'Assistant', icon: Bot },
+    { id: 'chat',      label: 'Assistant',     icon: Bot      },
     { id: 'breakdown', label: 'Task Breakdown', icon: Sparkles },
-    { id: 'plan', label: 'Day Planner', icon: Calendar },
+    { id: 'plan',      label: 'Day Planner',    icon: Calendar },
   ];
 
   return (
@@ -321,7 +333,12 @@ export default function AIAssistant() {
           <h1 className="page-title">AI Assistant</h1>
           <p className="page-subtitle">Powered by GPT-4 · Context-aware productivity intelligence</p>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 14px', background: AI_UNAVAILABLE ? 'rgba(255,159,67,0.1)' : 'var(--accent-dim)', border: `1px solid ${AI_UNAVAILABLE ? 'rgba(255,159,67,0.3)' : 'var(--border-glow)'}`, borderRadius: 'var(--radius-full)' }}>
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 8, padding: '6px 14px',
+          background: AI_UNAVAILABLE ? 'rgba(255,159,67,0.1)' : 'var(--accent-dim)',
+          border: `1px solid ${AI_UNAVAILABLE ? 'rgba(255,159,67,0.3)' : 'var(--border-glow)'}`,
+          borderRadius: 'var(--radius-full)',
+        }}>
           <div style={{ width: 7, height: 7, borderRadius: '50%', background: AI_UNAVAILABLE ? 'var(--warning)' : 'var(--success)' }} />
           <span style={{ fontSize: '0.78rem', color: AI_UNAVAILABLE ? 'var(--warning)' : 'var(--accent)', fontWeight: 600 }}>
             {AI_UNAVAILABLE ? 'AI Offline' : 'AI Online'}
@@ -332,7 +349,14 @@ export default function AIAssistant() {
       <div style={{ display: 'flex', gap: 4, marginBottom: 24, background: 'var(--bg-card)', padding: 4, borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', width: 'fit-content' }}>
         {TABS.map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
-            style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '9px 18px', borderRadius: 'var(--radius-md)', border: 'none', cursor: 'pointer', fontSize: '0.85rem', fontWeight: tab === t.id ? 600 : 400, background: tab === t.id ? 'var(--bg-elevated)' : 'transparent', color: tab === t.id ? 'var(--text-primary)' : 'var(--text-muted)', transition: 'all var(--transition)' }}>
+            style={{
+              display: 'flex', alignItems: 'center', gap: 7, padding: '9px 18px',
+              borderRadius: 'var(--radius-md)', border: 'none', cursor: 'pointer',
+              fontSize: '0.85rem', fontWeight: tab === t.id ? 600 : 400,
+              background: tab === t.id ? 'var(--bg-elevated)' : 'transparent',
+              color: tab === t.id ? 'var(--text-primary)' : 'var(--text-muted)',
+              transition: 'all var(--transition)',
+            }}>
             <t.icon size={15} color={tab === t.id ? 'var(--accent)' : undefined} /> {t.label}
           </button>
         ))}
@@ -364,7 +388,8 @@ export default function AIAssistant() {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 14, paddingTop: 12, borderTop: '1px solid var(--border)' }}>
               {SUGGESTIONS.map(s => (
                 <button key={s} onClick={() => setInput(s)}
-                  className="tag" style={{ cursor: 'pointer', fontSize: '0.78rem', background: 'var(--bg-elevated)', transition: 'all var(--transition)' }}
+                  className="tag"
+                  style={{ cursor: 'pointer', fontSize: '0.78rem', background: 'var(--bg-elevated)', transition: 'all var(--transition)' }}
                   onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent)'}
                   onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}>
                   {s}
@@ -396,7 +421,7 @@ export default function AIAssistant() {
       )}
 
       {tab === 'breakdown' && <div className="card"><BreakdownTab /></div>}
-      {tab === 'plan' && <div className="card"><PlanTab /></div>}
+      {tab === 'plan'      && <div className="card"><PlanTab /></div>}
     </div>
   );
 }

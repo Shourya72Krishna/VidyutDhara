@@ -32,6 +32,11 @@ require('./config/passport');
 
 const app = express();
 
+// --- CRITICAL FIX FOR RENDER DEPLOYMENTS ---
+// Tells Express to trust Render's reverse proxy headers (X-Forwarded-For)
+// This fixes BOTH your 429 Rate Limiter loops and the secure cookie drop issues.
+app.enable('trust proxy');
+
 // Security Middleware
 app.use(helmet({
   crossOriginEmbedderPolicy: false,
@@ -45,21 +50,27 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-// Rate limiting
+// Rate limiting (Global API)
 const limiter = rateLimit({
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,
   max: parseInt(process.env.RATE_LIMIT_MAX) || 100,
   message: { error: 'Too many requests, please try again later.' },
   standardHeaders: true,
   legacyHeaders: false,
+  // Fix: Explicitly validate proxy behavior so it isolates client IPs
+  validate: { trustProxy: true },
 });
 app.use('/api/', limiter);
 
-// Auth rate limiting
+// Auth rate limiting (Login/OAuth endpoints)
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 20,
   message: { error: 'Too many authentication attempts, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+  // Fix: Explicitly validate proxy behavior so it isolates client IPs
+  validate: { trustProxy: true },
 });
 app.use('/api/auth/', authLimiter);
 

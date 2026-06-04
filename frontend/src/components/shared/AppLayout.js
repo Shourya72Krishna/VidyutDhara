@@ -2,32 +2,33 @@ import React, { useState } from 'react';
 import { Outlet, useLocation, NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, CheckSquare, Target, Zap, FileText, Timer,
-  Bot, User, Settings, LogOut, Bell, Search, Menu, X,
-  Shield, Crown, ChevronRight
+  Bot, User, LogOut, Bell, Search, Menu, X,
+  Shield, Crown,
 } from 'lucide-react';
 import { useAuthStore } from '../../context/AuthStore';
 import { useQuery } from '@tanstack/react-query';
 import { notificationsAPI, searchAPI } from '../../services/api';
 import toast from 'react-hot-toast';
 
+const APP_NAME = process.env.REACT_APP_NAME || 'विद्युत्धारा';
+
 const navItems = [
   { path: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { path: '/tasks', icon: CheckSquare, label: 'Tasks' },
-  { path: '/goals', icon: Target, label: 'Goals' },
-  { path: '/habits', icon: Zap, label: 'Habits' },
-  { path: '/notes', icon: FileText, label: 'Notes' },
-  { path: '/focus', icon: Timer, label: 'Focus' },
-  { path: '/ai', icon: Bot, label: 'AI Assistant' },
+  { path: '/tasks',     icon: CheckSquare,     label: 'Tasks'     },
+  { path: '/goals',     icon: Target,          label: 'Goals'     },
+  { path: '/habits',    icon: Zap,             label: 'Habits'    },
+  { path: '/notes',     icon: FileText,        label: 'Notes'     },
+  { path: '/focus',     icon: Timer,           label: 'Focus'     },
+  { path: '/ai',        icon: Bot,             label: 'AI Assistant' },
 ];
 
 export default function AppLayout() {
   const { user, logout } = useAuthStore();
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchOpen, setSearchOpen]   = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [notifOpen, setNotifOpen] = useState(false);
+  const [notifOpen, setNotifOpen]     = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
 
   const { data: notifData } = useQuery({
     queryKey: ['notifications'],
@@ -69,15 +70,18 @@ export default function AppLayout() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <div style={{
               width: 36, height: 36, borderRadius: '10px',
-              background: 'var(--gradient-accent)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              overflow: 'hidden', flexShrink: 0,
               boxShadow: '0 4px 12px rgba(250, 189, 47, 0.3)',
             }}>
-              <Zap size={18} color="#0a0b0f" strokeWidth={2.5} />
+              <img
+                src="/favicon.png"
+                alt={APP_NAME}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
             </div>
             <div>
               <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.1rem', letterSpacing: '-0.02em' }}>
-                VidyutDhar
+                {APP_NAME}
               </div>
               <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                 Productivity OS
@@ -103,7 +107,8 @@ export default function AppLayout() {
                 background: isActive ? 'var(--accent-dim)' : 'transparent',
                 marginBottom: 2, transition: 'all var(--transition)',
                 fontSize: '0.875rem', fontWeight: isActive ? 600 : 400,
-                textDecoration: 'none', border: isActive ? '1px solid rgba(250, 189, 47, 0.15)' : '1px solid transparent',
+                textDecoration: 'none',
+                border: isActive ? '1px solid rgba(250, 189, 47, 0.15)' : '1px solid transparent',
               })}
             >
               <Icon size={17} />
@@ -127,12 +132,11 @@ export default function AppLayout() {
                 padding: '10px 12px', borderRadius: 'var(--radius-md)',
                 color: isActive ? 'var(--info)' : 'var(--text-secondary)',
                 background: isActive ? 'rgba(116, 185, 255, 0.1)' : 'transparent',
-                marginBottom: 2, transition: 'all var(--transition)', fontSize: '0.875rem',
-                fontWeight: isActive ? 600 : 400, textDecoration: 'none',
-                border: '1px solid transparent',
+                marginBottom: 2, transition: 'all var(--transition)',
+                fontSize: '0.875rem', fontWeight: isActive ? 600 : 400,
+                textDecoration: 'none', border: '1px solid transparent',
               })}>
-                <Shield size={17} />
-                Admin Panel
+                <Shield size={17} /> Admin Panel
               </NavLink>
             </>
           )}
@@ -143,25 +147,24 @@ export default function AppLayout() {
               padding: '10px 12px', borderRadius: 'var(--radius-md)',
               color: isActive ? 'var(--accent)' : 'var(--text-secondary)',
               background: isActive ? 'var(--accent-dim)' : 'transparent',
-              marginBottom: 2, transition: 'all var(--transition)', fontSize: '0.875rem',
-              fontWeight: isActive ? 600 : 400, textDecoration: 'none',
-              border: '1px solid transparent',
+              marginBottom: 2, transition: 'all var(--transition)',
+              fontSize: '0.875rem', fontWeight: isActive ? 600 : 400,
+              textDecoration: 'none', border: '1px solid transparent',
             })}>
-              <Crown size={17} />
-              Super Admin
+              <Crown size={17} /> Super Admin
             </NavLink>
           )}
         </nav>
 
-        {/* User profile at bottom */}
+        {/* User profile */}
         <div style={{ padding: '16px 12px', borderTop: '1px solid var(--border)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 'var(--radius-md)', background: 'var(--bg-elevated)' }}>
             <div style={{
-              width: 34, height: 34, borderRadius: '50%',
+              width: 34, height: 34, borderRadius: '50%', flexShrink: 0,
               background: user?.avatar ? `url(${user.avatar}) center/cover` : 'var(--gradient-accent)',
+              backgroundSize: 'cover', backgroundPosition: 'center',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-inverse)',
-              flexShrink: 0, backgroundSize: 'cover', backgroundPosition: 'center',
             }}>
               {!user?.avatar && user?.name?.[0]?.toUpperCase()}
             </div>
@@ -182,16 +185,14 @@ export default function AppLayout() {
 
       {/* Header */}
       <header style={{
-        position: 'fixed', top: 0, left: sidebarOpen ? 'var(--sidebar-width)' : 0, right: 0,
+        position: 'fixed', top: 0,
+        left: sidebarOpen ? 'var(--sidebar-width)' : 0, right: 0,
         height: 'var(--header-height)', background: 'rgba(10, 11, 15, 0.9)',
         backdropFilter: 'blur(12px)', borderBottom: '1px solid var(--border)',
         zIndex: 99, display: 'flex', alignItems: 'center', padding: '0 24px',
         gap: 16, transition: 'left 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
       }}>
-        <button
-          className="btn-ghost btn-icon"
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-        >
+        <button className="btn-ghost btn-icon" onClick={() => setSidebarOpen(!sidebarOpen)}>
           {sidebarOpen ? <X size={18} /> : <Menu size={18} />}
         </button>
 
@@ -207,8 +208,6 @@ export default function AppLayout() {
             onFocus={() => setSearchOpen(true)}
             onBlur={() => setTimeout(() => setSearchOpen(false), 200)}
           />
-
-          {/* Search results dropdown */}
           {searchOpen && searchQuery.length > 1 && searchData?.results?.length > 0 && (
             <div style={{
               position: 'absolute', top: 'calc(100% + 8px)', left: 0, right: 0,
@@ -289,7 +288,7 @@ export default function AppLayout() {
             )}
           </div>
 
-          {/* Profile link */}
+          {/* Profile */}
           <NavLink to="/profile" className="btn-ghost btn-icon">
             <User size={18} />
           </NavLink>
@@ -297,7 +296,13 @@ export default function AppLayout() {
       </header>
 
       {/* Main content */}
-      <main className="main-content" style={{ marginLeft: sidebarOpen ? 'var(--sidebar-width)' : 0, transition: 'margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}>
+      <main
+        className="main-content"
+        style={{
+          marginLeft: sidebarOpen ? 'var(--sidebar-width)' : 0,
+          transition: 'margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        }}
+      >
         <div className="page-content">
           <Outlet />
         </div>

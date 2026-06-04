@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Zap, Mail, Lock, ArrowRight, Chrome } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, ArrowRight, Chrome } from 'lucide-react';
 import { useAuthStore } from '../context/AuthStore';
 import toast from 'react-hot-toast';
 
@@ -36,12 +36,26 @@ export default function Login() {
       <div style={{ position: 'absolute', width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(circle, rgba(116,185,255,0.05) 0%, transparent 70%)', bottom: '20%', right: '10%', pointerEvents: 'none' }} />
 
       <div className="auth-card animate-fade">
+        {/* Dynamic App Brand Header Block */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 40 }}>
-          <div style={{ width: 42, height: 42, borderRadius: 12, background: 'var(--gradient-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 16px rgba(250,189,47,0.3)' }}>
-            <Zap size={22} color="#0a0b0f" strokeWidth={2.5} />
+          <div style={{ 
+            width: 42, 
+            height: 42, 
+            borderRadius: 12, 
+            overflow: 'hidden',
+            flexShrink: 0,
+            boxShadow: '0 4px 16px rgba(34, 211, 238, 0.3)' 
+          }}>
+            <img
+              src="/favicon.png"
+              alt={process.env.REACT_APP_NAME || 'विद्युत्धारा'}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
           </div>
           <div>
-            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.3rem' }}>VidyutDhar</div>
+            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.3rem' }}>
+              {process.env.REACT_APP_NAME || 'विद्युत्धारा'}
+            </div>
             <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Productivity OS</div>
           </div>
         </div>
