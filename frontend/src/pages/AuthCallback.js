@@ -19,14 +19,23 @@ export default function AuthCallback() {
     }
 
     if (token) {
+      // Set token first, then call refreshUser
       localStorage.setItem('vd_token', token);
-      refreshUser().then(() => {
-        toast.success('Signed in with Google!');
-        navigate('/dashboard');
-      }).catch(() => {
-        toast.error('Authentication failed');
-        navigate('/login');
-      });
+
+      // Small timeout ensures localStorage write is complete
+      // and axios interceptor picks up the new token
+      setTimeout(() => {
+        refreshUser()
+          .then(() => {
+            toast.success('Signed in with Google!');
+            navigate('/dashboard');
+          })
+          .catch(() => {
+            toast.error('Authentication failed');
+            localStorage.removeItem('vd_token');
+            navigate('/login');
+          });
+      }, 100);
     } else {
       navigate('/login');
     }
