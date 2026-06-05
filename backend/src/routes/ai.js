@@ -7,9 +7,13 @@ console.log("OPENAI KEY:", process.env.OPENAI_API_KEY);
 
 router.use(protect);
 
+// --- FIX FOR OPENROUTER INTEGRATION ---
 const getOpenAI = () => {
   if (!process.env.OPENAI_API_KEY) throw new Error('OpenAI API key not configured.');
-  return new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  return new OpenAI({ 
+    apiKey: process.env.OPENAI_API_KEY,
+    baseURL: 'https://openrouter.ai/api/v1' // Crucial: Points the OpenAI SDK to OpenRouter's proxy layer
+  });
 };
 
 const saveInteraction = async (userId, feature, prompt, response, tokens) => {

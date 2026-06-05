@@ -16,7 +16,7 @@ const SUGGESTIONS = [
 
 // ============================================================
 // AI_UNAVAILABLE — set this to false when AI is live
-const AI_UNAVAILABLE = true;
+const AI_UNAVAILABLE = false;
 // ============================================================
 
 function UnavailableBanner() {
