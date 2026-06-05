@@ -297,6 +297,7 @@ textarea.form-input {
   align-items: center;
   justify-content: center;
   padding: 20px;
+  padding-top: calc(var(--header-height) + 20px);
 }
 
 .modal {
