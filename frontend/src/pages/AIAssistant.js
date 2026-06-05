@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Bot, Send, Zap, Calendar, Target, Sparkles, User, Construction } from 'lucide-react';
+import { Bot, Send, Calendar, Target, Sparkles, User, Construction } from 'lucide-react';
 import { aiAPI, tasksAPI } from '../services/api';
 import toast from 'react-hot-toast';
 
-const APP_NAME = process.env.REACT_APP_NAME || 'विद्युत्धारा';
+const APP_NAME = process.env.REACT_APP_NAME || 'VidyutDhar';
 
 const SUGGESTIONS = [
   'What should I work on next?',
@@ -83,24 +83,90 @@ function ChatMessage({ msg }) {
   );
 }
 
+// Epic center-screen toast
+function showEpicToast(title, priority, dueDate) {
+  const priorityColors = {
+    LOW: '#74b9ff', MEDIUM: '#a3e635', HIGH: '#ff9f43', URGENT: '#ff6b6b',
+  };
+  const priorityEmojis = {
+    LOW: '🔵', MEDIUM: '🟢', HIGH: '🟠', URGENT: '🔴',
+  };
+  const color = priorityColors[priority] || priorityColors.MEDIUM;
+  const emoji = priorityEmojis[priority] || '✅';
+
+  const dueTxt = dueDate
+    ? `Due ${new Date(dueDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}`
+    : 'No due date';
+
+  toast.custom(
+    (t) => (
+      <div
+        className="toast-epic"
+        style={{ opacity: t.visible ? 1 : 0, transition: 'opacity 0.3s ease' }}
+      >
+        <div className="toast-epic-icon">✅</div>
+        <div className="toast-epic-body">
+          <div className="toast-epic-title">Task Added!</div>
+          <div className="toast-epic-sub">{title}</div>
+          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: 2 }}>{dueTxt}</div>
+        </div>
+        <div className="toast-epic-badge" style={{ color, borderColor: `${color}40`, background: `${color}15` }}>
+          {emoji} {priority}
+        </div>
+      </div>
+    ),
+    {
+      duration: 3000,
+      position: 'top-center',
+    }
+  );
+}
+
 function BreakdownTab() {
   const qc = useQueryClient();
   const [goal, setGoal] = useState('');
   const [result, setResult] = useState(null);
   const [creating, setCreating] = useState({});
+  const [added, setAdded] = useState({}); // track already-added tasks
 
   const breakMut = useMutation({
     mutationFn: () => aiAPI.breakdown(goal),
-    onSuccess: (res) => setResult(res.data),
+    onSuccess: (res) => { setResult(res.data); setAdded({}); },
     onError: e => toast.error(e.response?.data?.error || 'AI unavailable'),
   });
 
   const createTask = async (task) => {
+    // Prevent duplicate — if already added in this session, block
+    if (added[task.title]) {
+      toast.error('This task was already added!', { position: 'top-center' });
+      return;
+    }
+
     setCreating(c => ({ ...c, [task.title]: true }));
     try {
-      await tasksAPI.create({ title: task.title, description: task.description, priority: task.priority });
+      let dueDate = null;
+      if (task.estimatedDays) {
+        const d = new Date();
+        d.setDate(d.getDate() + task.estimatedDays);
+        dueDate = d.toISOString();
+      }
+
+      await tasksAPI.create({
+        title: task.title,
+        description: task.description,
+        priority: task.priority,
+        ...(dueDate && { dueDate }),
+      });
+
       qc.invalidateQueries(['tasks']);
-      toast.success('Task created!');
+      qc.invalidateQueries(['tasks-dash']);
+
+      // Mark as added so button disables and duplicate is prevented
+      setAdded(a => ({ ...a, [task.title]: true }));
+
+      // Epic center toast
+      showEpicToast(task.title, task.priority, dueDate);
+
     } catch {
       toast.error('Failed to create task');
     } finally {
@@ -118,6 +184,7 @@ function BreakdownTab() {
         <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 700, marginBottom: 6 }}>AI Task Breakdown</h3>
         <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Describe a goal and AI will break it into actionable tasks</p>
       </div>
+
       <div style={{ display: 'flex', gap: 10, marginBottom: 20 }}>
         <input
           className="form-input"
@@ -150,32 +217,60 @@ function BreakdownTab() {
 
       {result?.tasks && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {result.tasks.map((task, i) => (
-            <div key={i} className="card" style={{ padding: '16px 18px' }}>
-              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                    <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>{task.title}</span>
-                    <span className={`badge badge-${task.priority?.toLowerCase()}`}>{task.priority}</span>
-                    {task.estimatedDays && (
-                      <span className="badge" style={{ background: 'var(--bg-elevated)', color: 'var(--text-muted)' }}>~{task.estimatedDays}d</span>
+          {result.tasks.map((task, i) => {
+            const isAdded    = added[task.title];
+            const isCreating = creating[task.title];
+            return (
+              <div key={i} className="card" style={{ padding: '16px 18px', borderColor: isAdded ? 'rgba(163,230,53,0.3)' : undefined }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                      <span style={{ fontWeight: 600, fontSize: '0.9rem', textDecoration: isAdded ? 'line-through' : 'none', color: isAdded ? 'var(--text-muted)' : 'var(--text-primary)' }}>
+                        {task.title}
+                      </span>
+                      <span className={`badge badge-${task.priority?.toLowerCase()}`}>{task.priority}</span>
+                      {task.estimatedDays && (
+                        <span className="badge" style={{ background: 'var(--bg-elevated)', color: 'var(--text-muted)' }}>
+                          ~{task.estimatedDays}d
+                        </span>
+                      )}
+                    </div>
+                    {task.description && (
+                      <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: 8 }}>{task.description}</p>
+                    )}
+                    {task.subtasks?.length > 0 && (
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                        {task.subtasks.map((st, j) => (
+                          <span key={j} className="tag" style={{ fontSize: '0.73rem' }}>{st}</span>
+                        ))}
+                      </div>
                     )}
                   </div>
-                  {task.description && <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: 8 }}>{task.description}</p>}
-                  {task.subtasks?.length > 0 && (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                      {task.subtasks.map((st, j) => (
-                        <span key={j} className="tag" style={{ fontSize: '0.73rem' }}>{st}</span>
-                      ))}
-                    </div>
-                  )}
+
+                  {/* Add button — shows checkmark once added */}
+                  <button
+                    className={`btn btn-sm ${isAdded ? '' : 'btn-secondary'}`}
+                    onClick={() => createTask(task)}
+                    disabled={isAdded || isCreating}
+                    style={{
+                      flexShrink: 0,
+                      background: isAdded ? 'var(--success-dim)' : undefined,
+                      color: isAdded ? 'var(--success)' : undefined,
+                      border: isAdded ? '1px solid rgba(163,230,53,0.3)' : undefined,
+                      cursor: isAdded ? 'default' : 'pointer',
+                      minWidth: 72,
+                      justifyContent: 'center',
+                    }}
+                  >
+                    {isCreating
+                      ? <div className="animate-spin" style={{ width: 13, height: 13, border: '2px solid rgba(0,0,0,0.2)', borderTopColor: 'currentColor', borderRadius: '50%' }} />
+                      : isAdded ? '✓ Added' : '+ Add'
+                    }
+                  </button>
                 </div>
-                <button className="btn btn-secondary btn-sm" onClick={() => createTask(task)} disabled={creating[task.title]}>
-                  + Add
-                </button>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
@@ -202,6 +297,7 @@ function PlanTab() {
         <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 700, marginBottom: 6 }}>AI Daily Planner</h3>
         <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Tell AI how much time you have and get an optimized work plan</p>
       </div>
+
       <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end', marginBottom: 24 }}>
         <div className="form-group" style={{ flex: 1 }}>
           <label className="form-label">Available hours today</label>
