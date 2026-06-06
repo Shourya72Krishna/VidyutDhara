@@ -1,369 +1,169 @@
-# ⚡ VidyutDhar – AI-Powered Productivity Platform
+# ⚡ विद्युत्धारा
 
-A production-ready, full-stack productivity SaaS platform built with React, Node.js, PostgreSQL, and OpenAI. Manage tasks, goals, habits, focus sessions, and notes — all with AI intelligence.
-
----
-
-## 📸 Features
-
-### Core Productivity
-- ✅ **Tasks** – Full CRUD with priorities, due dates, tags, categories, subtasks, dependencies, recurring tasks, archive/restore
-- 🎯 **Goals** – Long-term goal tracking with progress percentage and linked tasks
-- ⚡ **Habits** – Daily/weekly/monthly habits with streak tracking and 28-day heatmap
-- 📝 **Notes** – Rich text notes with tags, pinning, and auto-save
-- ⏱️ **Focus Timer** – Pomodoro-style timer with session history and statistics
-- 📊 **Dashboard** – Beautiful overview with charts, stats, and quick actions
-
-### AI Features (requires OpenAI API key)
-- 🤖 **AI Assistant** – Context-aware chat using your tasks/goals/habits
-- ✨ **Task Breakdown** – Automatically decompose goals into actionable subtasks
-- 📅 **Day Planner** – AI-generated optimized daily schedule
-
-### Authentication & Security
-- 🔐 Google OAuth 2.0
-- 📧 Email/password with bcrypt hashing
-- 🔑 JWT sessions with device/browser/IP tracking
-- 🔒 Rate limiting, CORS, Helmet, input validation
-
-### Admin System
-- 👑 **Super Admin** – Create/remove admins, system analytics, settings
-- 🛡️ **Admin** – User management, ban/suspend, activity & audit logs
-- 👤 **User** – Personal productivity workspace
+### *The Current of Productivity. The Flow of Purpose.*
 
 ---
 
-## 🛠️ Tech Stack
-
-| Layer | Technology |
-|---|---|
-| Frontend | React 18, React Router v6, Zustand, React Query |
-| Styling | Custom CSS design system (no framework) |
-| Charts | Recharts |
-| Backend | Node.js, Express.js |
-| Database | PostgreSQL + Prisma ORM |
-| Auth | Passport.js (Google OAuth + Local) |
-| AI | OpenAI GPT-4o-mini |
-| Security | Helmet, express-rate-limit, bcryptjs, JWT |
+> **श्रीकृष्णार्पणमस्तु**
+> *Built by Shourya Garg — Offered to Shri Krishna*
 
 ---
 
-## 🚀 Quick Start
+## What is विद्युत्धारा?
 
-### Prerequisites
-- Node.js 18+
-- PostgreSQL 14+
-- npm or yarn
+विद्युत्धारा is not just a productivity app.
+It is a living, breathing system — a digital river of electric intention — built for those who do not merely wish to *do more*, but to *become more*.
 
-### 1. Clone & Install
+The name itself speaks:
+**विद्युत्** — electricity, lightning, the spark of action.
+**धारा** — a stream, a current, a continuous flow.
 
-```bash
-git clone <repo-url>
-cd vidyutdhar
-npm run install:all
-```
+Together — *the unbroken current of purposeful work.*
 
-### 2. Configure Backend
-
-```bash
-cp backend/.env.example backend/.env
-```
-
-Edit `backend/.env`:
-
-```env
-DATABASE_URL=postgresql://your_user:your_password@localhost:5432/vidyutdhar_db
-JWT_SECRET=your_long_random_secret_here
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-OPENAI_API_KEY=your_openai_api_key
-SUPER_ADMIN_EMAIL=superadmin@yourdomain.com
-SUPER_ADMIN_PASSWORD=YourSecurePassword123!
-FRONTEND_URL=http://localhost:3000
-```
-
-### 3. Configure Frontend
-
-```bash
-cp frontend/.env.example frontend/.env
-```
-
-Edit `frontend/.env`:
-
-```env
-REACT_APP_API_URL=http://localhost:5000/api
-REACT_APP_GOOGLE_CLIENT_ID=your_google_client_id
-```
-
-### 4. Set Up Database
-
-```bash
-# Create the database first
-createdb vidyutdhar_db
-
-# Push schema
-npm run db:push
-
-# Generate Prisma client
-npm run db:generate
-```
-
-### 5. Run Development
-
-```bash
-npm run dev
-```
-
-- Frontend: http://localhost:3000
-- Backend: http://localhost:5000
-- Prisma Studio: `npm run db:studio`
-
-The Super Admin account is **auto-created** on first backend startup using your `.env` credentials.
+This is what विद्युत्धारा is. Not a to-do list. Not a habit tracker. A **Productivity Operating System** — one that thinks alongside you, plans with you, and flows with you through every task, every goal, every day.
 
 ---
 
-## 🔑 Google OAuth Setup
+## ✨ The Experience
 
-1. Go to [Google Cloud Console](https://console.cloud.google.com)
-2. Create a new project or select existing
-3. Enable **Google+ API** and **Google OAuth2 API**
-4. Create OAuth 2.0 credentials (Web application)
-5. Add authorized redirect URIs:
-   - `http://localhost:5000/api/auth/google/callback` (development)
-   - `https://yourdomain.com/api/auth/google/callback` (production)
-6. Copy Client ID and Secret to `.env`
+From the moment the app opens, विद्युत्धारा announces itself with an electric spark — your logo charged with golden rings, sparks flying, the name illuminating like lightning across a dark sky. This is not an accident. Every pixel of this application has been crafted with intention.
+
+The interface is dark as the space between stars, lit with amber gold — the color of fire, of electricity, of life. Every transition is fluid. Every interaction responds like it was waiting for your touch.
+
+This is what it feels like to work inside विद्युत्धारा.
 
 ---
 
-## 🤖 OpenAI Setup
+## 🏛️ The Pillars
 
-1. Sign up at [platform.openai.com](https://platform.openai.com)
-2. Create an API key
-3. Add to `backend/.env` as `OPENAI_API_KEY`
-4. The app uses `gpt-4o-mini` (cost-efficient model)
+### ⚡ Tasks — *The Foundation of Action*
 
-> Without an API key, AI features will return a 503 error but everything else works normally.
+Every great work begins with a task. विद्युत्धारा's task system is not a simple list — it is a complete command center of your intentions.
 
----
+Create tasks with rich detail — title, description, priority, category, tags, due dates. Organize them by urgency — from **Low** to **Urgent** — with color-coded priority indicators that make the most critical work impossible to ignore. Break large tasks into **subtasks**. Chain tasks with **dependencies** so nothing falls through the cracks. Set **recurring tasks** that come back like the sun. Archive what is done. Restore what was forgotten. Filter, search, sort — find anything in an instant.
 
-## 📁 Project Structure
-
-```
-vidyutdhar/
-├── package.json              # Root scripts (monorepo)
-├── README.md
-│
-├── frontend/
-│   ├── public/
-│   │   └── index.html
-│   ├── src/
-│   │   ├── App.js            # Root with routing
-│   │   ├── index.js
-│   │   ├── context/
-│   │   │   └── AuthStore.js  # Zustand auth store
-│   │   ├── services/
-│   │   │   └── api.js        # Axios API client
-│   │   ├── styles/
-│   │   │   └── globals.css   # Design system
-│   │   ├── components/
-│   │   │   └── shared/
-│   │   │       └── AppLayout.js  # Sidebar + header
-│   │   └── pages/
-│   │       ├── Login.js
-│   │       ├── Register.js
-│   │       ├── ForgotPassword.js
-│   │       ├── ResetPassword.js
-│   │       ├── AuthCallback.js
-│   │       ├── Dashboard.js
-│   │       ├── Tasks.js
-│   │       ├── Goals.js
-│   │       ├── Habits.js
-│   │       ├── Notes.js
-│   │       ├── Focus.js
-│   │       ├── AIAssistant.js
-│   │       ├── Profile.js
-│   │       ├── AdminPanel.js
-│   │       └── SuperAdminPanel.js
-│   └── package.json
-│
-├── backend/
-│   ├── src/
-│   │   ├── server.js         # Express app entry
-│   │   ├── config/
-│   │   │   ├── prisma.js     # Prisma client
-│   │   │   └── passport.js   # Auth strategies
-│   │   ├── middleware/
-│   │   │   ├── auth.js       # JWT protect + role guards
-│   │   │   └── error.js      # Error handler
-│   │   ├── routes/
-│   │   │   ├── auth.js
-│   │   │   ├── users.js
-│   │   │   ├── tasks.js
-│   │   │   ├── goals.js
-│   │   │   ├── habits.js
-│   │   │   ├── notes.js
-│   │   │   ├── focus.js
-│   │   │   ├── ai.js
-│   │   │   ├── admin.js
-│   │   │   ├── superAdmin.js
-│   │   │   ├── analytics.js
-│   │   │   ├── notifications.js
-│   │   │   ├── search.js
-│   │   │   └── activity.js
-│   │   └── utils/
-│   │       ├── jwt.js
-│   │       ├── logger.js
-│   │       ├── seed.js
-│   │       └── activityLogger.js
-│   └── package.json
-│
-└── prisma/
-    └── schema.prisma         # Complete DB schema
-```
+Your tasks are not a burden. They are your roadmap.
 
 ---
 
-## 🔐 Default Credentials
+### 🎯 Goals — *The Horizon You Walk Toward*
 
-After first run, the Super Admin is created automatically:
+Without goals, tasks are just noise. विद्युत्धारा connects every action to a larger purpose.
 
-| Field | Value (from .env) |
-|---|---|
-| Email | `SUPER_ADMIN_EMAIL` |
-| Password | `SUPER_ADMIN_PASSWORD` |
+Set long-term goals across any dimension of life — work, health, learning, relationships, finances. Watch your progress bloom as a living percentage, updated as you complete the tasks linked to each goal. Set target dates. Mark goals as active, paused, completed, or abandoned — because honest tracking is the first form of discipline.
 
-**Change these immediately in production!**
+Your goals are the stars. Your tasks are the steps.
 
 ---
 
-## 🚢 Production Deployment
+### 🔥 Habits — *The Architecture of Character*
 
-### Environment
+You do not rise to the level of your goals. You fall to the level of your habits. विद्युत्धारा takes this truth seriously.
 
-```env
-NODE_ENV=production
-DATABASE_URL=postgresql://...  # Use connection pooling (PgBouncer)
-JWT_SECRET=<64-char random string>
-FRONTEND_URL=https://yourdomain.com
-```
-
-### Build & Run
-
-```bash
-# Build frontend
-npm run build
-
-# Serve with PM2
-npm install -g pm2
-cd backend && pm2 start src/server.js --name vidyutdhar-api
-
-# Serve frontend with Nginx (see nginx.conf below)
-```
-
-### Nginx Config
-
-```nginx
-server {
-    listen 80;
-    server_name yourdomain.com;
-    return 301 https://$host$request_uri;
-}
-
-server {
-    listen 443 ssl;
-    server_name yourdomain.com;
-
-    ssl_certificate /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;
-
-    # Frontend (React build)
-    location / {
-        root /var/www/vidyutdhar/frontend/build;
-        try_files $uri /index.html;
-    }
-
-    # Backend API
-    location /api {
-        proxy_pass http://localhost:5000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_cache_bypass $http_upgrade;
-    }
-}
-```
-
-### Docker (Optional)
-
-```bash
-# Add Dockerfiles for each service
-docker-compose up -d
-```
+Track daily, weekly, and monthly habits. Watch your **streak** grow — a number that represents not just discipline, but identity. See your longest streak ever achieved, a monument to your best self. The **28-day heatmap** shows the texture of your consistency — golden squares for days you showed up, quiet gaps that teach you where to strengthen. Log completions with a single tap. The fire emoji next to your streak is not decoration — it is earned.
 
 ---
 
-## 📡 API Reference
+### 📝 Notes — *The Garden of Thought*
 
-### Auth
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | `/api/auth/register` | Register new user |
-| POST | `/api/auth/login` | Login with email/password |
-| POST | `/api/auth/logout` | Logout current session |
-| GET | `/api/auth/me` | Get current user |
-| GET | `/api/auth/google` | Start Google OAuth |
-| POST | `/api/auth/forgot-password` | Send reset email |
-| POST | `/api/auth/reset-password` | Reset password |
+Thoughts are fleeting. विद्युत्धारा catches them before they disappear.
 
-### Tasks
-| Method | Endpoint | Description |
-|---|---|---|
-| GET | `/api/tasks` | List tasks (filterable) |
-| POST | `/api/tasks` | Create task |
-| PUT | `/api/tasks/:id` | Update task |
-| DELETE | `/api/tasks/:id` | Delete task |
-| PATCH | `/api/tasks/:id/archive` | Toggle archive |
-
-### AI
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | `/api/ai/breakdown` | Break goal into tasks |
-| POST | `/api/ai/plan` | Generate daily plan |
-| POST | `/api/ai/assistant` | Chat with AI assistant |
-
-*(Full API docs for goals, habits, notes, focus, admin, etc. follow the same REST patterns)*
+A beautiful, distraction-free notes system that gets out of your way. Pin the important ones to the top. Tag them for instant retrieval. Search across all your notes in real time. Auto-save ensures not a single word is lost. Each note card is colored by its own personality — a garden of ideas, each bloom distinct.
 
 ---
 
-## 🔒 Security Features
+### ⏱️ Focus — *The Sacred Time*
 
-- JWT tokens stored in HTTP-only cookies + localStorage fallback
-- bcrypt password hashing (salt rounds: 12)
-- Rate limiting: 100 req/15min globally, 20 req/15min for auth
-- Helmet.js security headers
-- CORS restricted to frontend origin
-- Input validation with express-validator
-- Prisma parameterized queries (SQL injection protection)
-- Role-based access control (RBAC) middleware
-- Audit logging for all admin actions
+Deep work is the superpower of the modern age. विद्युत्धारा protects it.
+
+A Pomodoro-inspired focus timer with circular progress that pulses with electric energy. Choose your session length — 25 minutes, 50 minutes, 90 minutes — or take a 5 or 15 minute break. The golden ring shrinks as your session deepens, and when the session completes, it is logged — permanently — into your history. Every minute of focused work you have ever done lives in विद्युत्धारा's memory. Your total focus hours, your session count, your average session length — all there, waiting to tell you how serious you truly are.
 
 ---
 
-## 🤝 Contributing
+### 🤖 AI Assistant — *The Mind Behind the Mind*
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feat/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feat/amazing-feature`)
-5. Open a Pull Request
+विद्युत्धारा is powered by the most advanced intelligence available — GPT-4 — woven so deeply into the fabric of the app that it feels like a second consciousness.
 
----
+**The Assistant** knows your tasks. It knows your goals. It knows your habits. Ask it anything — *"What should I work on next?"* — and it will answer not with a generic response, but with a response forged from the reality of your actual work.
 
-## 📄 License
+**Task Breakdown** is where ambition meets engineering. Speak a dream — *"Learn machine learning in 3 months"* — and watch as AI disassembles it into a precise, prioritized, time-estimated action plan. Every subtask generated. Every due date calculated. One click to add any task directly into your system.
 
-MIT License – see [LICENSE](LICENSE) for details.
+**Day Planner** takes your available hours and your pending work and returns an optimized schedule for the day — time-blocked, tip-annotated, focus-area identified. It is like having a chief of staff who has read every productivity book ever written.
 
 ---
 
-Built with ❤️ · VidyutDhar Productivity OS
+### 📊 Dashboard — *The Bridge of Awareness*
+
+The dashboard is where विद्युत्धारा reveals itself fully. At a glance — your task count, goal count, habit count, total focus hours. A live area chart of your weekly activity, drawn not from fake data but from your actual actions. A completion donut that shows your real progress. Your most urgent upcoming tasks. Your highest streak habits. Your active goals and their progress bars.
+
+This is not decoration. This is intelligence made visible.
+
+---
+
+### 🔔 Notifications — *The Gentle Reminder*
+
+विद्युत्धारा watches for you. Due task reminders. Goal reminders. Habit reminders. System messages. All collected in a clean notification panel — unread items glowing gold, read ones resting quietly. Never miss what matters.
+
+---
+
+### 🔍 Search — *Instant Recall*
+
+Every task, goal, note, and habit you have ever created is one keystroke away. The live search in the header reaches across all your data simultaneously — results appearing before you finish typing, categorized and clickable. Your entire productivity universe, instantly navigable.
+
+---
+
+## 👑 The Hierarchy of Trust
+
+विद्युत्धारा is built for teams as much as for individuals. A carefully designed three-tier role system governs every interaction.
+
+**The Super Admin** — singular, supreme, inviolable — holds the master key. Only one can exist. This seat cannot be claimed, only designated. From here, admins are created and removed, platform analytics are reviewed, system settings are configured, and the entire application is governed.
+
+**Admins** — appointed by the Super Admin alone — are the stewards of the platform. They manage users, review activity logs, audit system actions, moderate content, and keep the ecosystem healthy.
+
+**Users** — the heart of विद्युत्धारा — inhabit their own sovereign workspace. Their tasks, goals, habits, notes, and focus sessions are entirely their own. No other user can see them. No other user can touch them.
+
+This is not just access control. It is a philosophy of trust.
+
+---
+
+## 🔐 Security — *The Invisible Shield*
+
+विद्युत्धारा does not take security lightly. Every password is hashed with bcrypt at 12 salt rounds — unrecoverable even by the system itself. Every session is a signed JWT token, tracked in the database, expirable on demand. Google OAuth provides a seamless, password-free login path. Rate limiting throttles abuse. Helmet.js hardens every HTTP header. CORS is locked to known origins. Input is validated before it touches the database. Every admin action is audit-logged — who did what, when, to whom.
+
+Every login records your browser, device, operating system, and IP address. Your session history is yours to inspect.
+
+---
+
+## 🌐 The Stack — *The Bones of Lightning*
+
+विद्युत्धारा is built on a foundation worthy of its ambition.
+
+The frontend is React 18 — fast, component-driven, lazy-loaded for instant performance. State is managed by Zustand — lightweight and elegant. Server state is synchronized by TanStack Query — intelligent caching, background refetching, zero stale data. Every animation is CSS-native — no animation library needed when the design system is built correctly. The design itself is a custom dark theme — no frameworks, no limitations, just pure CSS variables and craftsmanship.
+
+The backend is Node.js with Express — battle-tested, high-performance, modular. Every route is protected. Every error is handled. Every log is structured. The database is PostgreSQL — relational, reliable, indexed for speed. Prisma ORM maps every table with type safety and elegance. Fifteen database models form the complete schema of a human's productive life.
+
+The AI is OpenAI's GPT-4o-mini — cost-efficient, context-aware, deeply integrated.
+
+---
+
+## 🪷 A Final Word
+
+There are many productivity tools in the world.
+Most of them make you feel like you are managing a spreadsheet.
+
+विद्युत्धारा was built differently.
+It was built to feel like *electricity* —
+fast, alive, purposeful, unstoppable.
+
+Every feature exists because someone needed it.
+Every animation exists because beauty is not a luxury — it is respect for the user's attention.
+Every line of code was written with care.
+
+This application is not just software.
+It is an offering.
+
+---
+
+*श्रीकृष्णार्पणमस्तु*
+**Built by Shourya Garg**
+*Offered to Shri Krishna* 🪷
