@@ -4,11 +4,6 @@
 
 ---
 
-> **श्रीकृष्णार्पणमस्तु**
-> *Built by Shourya Garg — Offered to Shri Krishna*
-
----
-
 ## What is विद्युत्धारा?
 
 विद्युत्धारा is not just a productivity app.
